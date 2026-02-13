@@ -60,7 +60,7 @@ from src.data.loader import DataLoader
 
 # Carregar dados de escolas
 loader = DataLoader()
-schools = loader.load_schools('path/to/schools.csv')
+schools = loader.load_schools_from_csv('path/to/schools.csv')
 ```
 
 ### 2. Configurar o Modelo de Otimização
@@ -94,11 +94,19 @@ print(f"Custo estimado: R$ {results['estimated_cost']}")
 ### 4. Exportar Resultados
 
 ```python
-# Exportar rotas para arquivo
-results.export_routes('output/routes.json')
+# Exportar resultados
+import json
 
-# Gerar visualização
-results.plot_map('output/delivery_map.html')
+# Obter resultados em formato serializável
+export_data = solver.export_results()
+
+# Salvar em arquivo JSON
+with open('output/routes.json', 'w', encoding='utf-8') as f:
+    json.dump(export_data, f, indent=2, ensure_ascii=False)
+
+# Imprimir informações das rotas
+for route in results['routes']:
+    print(f"Rota {route.route_id}: {len(route.schools)} escolas, {route.total_distance:.2f}km")
 ```
 
 ## Formato de Dados de Entrada
