@@ -7,6 +7,12 @@ from .models import School, DeliveryRoute, OptimizationConfig
 from ..utils.geo import calculate_distance
 
 
+# Constantes para estimativa de tempo e custo
+MINUTES_PER_SCHOOL = 15  # Tempo médio de parada em cada escola (minutos)
+MINUTES_PER_KM = 2  # Tempo de viagem por km (minutos)
+COST_PER_KM = 5.0  # Custo estimado por km (R$)
+
+
 class OptimizationSolver:
     """
     Classe principal para resolver problemas de otimização de roteamento
@@ -141,8 +147,8 @@ class OptimizationSolver:
                 )
                 cluster_distance += distance
             
-            # Estimar tempo de entrega (média de 15 min por escola + tempo de viagem)
-            estimated_time = len(cluster) * 15 + int(cluster_distance * 2)  # 2 min por km
+            # Estimar tempo de entrega
+            estimated_time = len(cluster) * MINUTES_PER_SCHOOL + int(cluster_distance * MINUTES_PER_KM)
             
             route = DeliveryRoute(
                 route_id=idx,
@@ -161,7 +167,7 @@ class OptimizationSolver:
             'num_routes': len(self.routes),
             'total_distance': total_distance,
             'total_meals': total_meals,
-            'estimated_cost': total_distance * 5.0,  # R$ 5 por km (estimativa)
+            'estimated_cost': total_distance * COST_PER_KM,
             'routes': self.routes,
             'average_route_distance': total_distance / len(self.routes) if self.routes else 0,
             'schools_served': len(self.schools)
