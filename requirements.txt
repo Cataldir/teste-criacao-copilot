@@ -1,0 +1,17 @@
+# Core dependencies for the meal delivery mapping system
+# Python 3.8+
+
+# Data processing
+pandas>=1.5.0
+numpy>=1.23.0
+
+# Geospatial operations
+geopy>=2.3.0
+
+# Optimization (optional - for advanced algorithms)
+scipy>=1.9.0
+
+# Future extensions
+# matplotlib>=3.6.0  # For visualization
+# folium>=0.14.0     # For interactive maps
+# ortools>=9.5.0     # For advanced optimization
