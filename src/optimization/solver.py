@@ -4,7 +4,7 @@ Solver de otimização espacial para roteamento de entrega de refeições
 
 from typing import List, Dict, Any, Optional
 from .models import School, DeliveryRoute, OptimizationConfig
-import math
+from ..utils.geo import calculate_distance
 
 
 class OptimizationSolver:
@@ -51,35 +51,6 @@ class OptimizationSolver:
         
         self.schools = schools
     
-    def _calculate_distance(self, coord1: tuple, coord2: tuple) -> float:
-        """
-        Calcula a distância entre duas coordenadas geográficas usando a fórmula de Haversine
-        
-        Args:
-            coord1: Tupla (latitude, longitude) do ponto 1
-            coord2: Tupla (latitude, longitude) do ponto 2
-        
-        Returns:
-            Distância em km
-        """
-        lat1, lon1 = coord1
-        lat2, lon2 = coord2
-        
-        # Raio da Terra em km
-        R = 6371.0
-        
-        # Converter para radianos
-        lat1_rad = math.radians(lat1)
-        lat2_rad = math.radians(lat2)
-        delta_lat = math.radians(lat2 - lat1)
-        delta_lon = math.radians(lon2 - lon1)
-        
-        # Fórmula de Haversine
-        a = math.sin(delta_lat / 2)**2 + math.cos(lat1_rad) * math.cos(lat2_rad) * math.sin(delta_lon / 2)**2
-        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
-        
-        distance = R * c
-        return distance
     
     def _cluster_schools(self) -> List[List[School]]:
         """
@@ -110,7 +81,7 @@ class OptimizationSolver:
                 if current_meals + school.num_students <= self.config.vehicle_capacity:
                     # Verificar distância ao cluster
                     cluster_center = current_cluster[0]
-                    distance = self._calculate_distance(
+                    distance = calculate_distance(
                         cluster_center.coordinates(),
                         school.coordinates()
                     )
@@ -164,7 +135,7 @@ class OptimizationSolver:
             cluster_meals = sum(s.num_students for s in cluster)
             
             for i in range(len(cluster) - 1):
-                distance = self._calculate_distance(
+                distance = calculate_distance(
                     cluster[i].coordinates(),
                     cluster[i + 1].coordinates()
                 )
